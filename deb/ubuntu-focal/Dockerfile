@@ -14,7 +14,9 @@ RUN if  [ "$(dpkg-divert --truename /usr/bin/man)" = "/usr/bin/man.REAL" ]; then
     fi
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends curl devscripts equivs git
+RUN apt-get update && apt-get install -y --no-install-recommends curl devscripts equivs git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV GOPROXY=direct
 ENV GO111MODULE=off
@@ -25,7 +27,9 @@ ENV RUNC_BUILDTAGS apparmor seccomp selinux
 
 ARG COMMON_FILES
 COPY ${COMMON_FILES} /root/build-deb/debian
-RUN mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i /root/build-deb/debian/control
+RUN apt-get update && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i /root/build-deb/debian/control \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY sources/ /sources
 ARG DISTRO
