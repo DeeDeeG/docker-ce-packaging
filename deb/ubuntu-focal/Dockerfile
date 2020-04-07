@@ -14,7 +14,11 @@ RUN if  [ "$(dpkg-divert --truename /usr/bin/man)" = "/usr/bin/man.REAL" ]; then
     fi
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends curl devscripts equivs git \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl \
+      devscripts \
+      equivs \
+      git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
